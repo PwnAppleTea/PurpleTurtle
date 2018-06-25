@@ -115,26 +115,44 @@ public:
         nModifierUpdateBlock = 1; // we use the version 2 for dmd
         nMaxMoneyOut = 235813213 * COIN;
 
-        const char* pszTimestamp = "PurpleTurtle cryptocurrency";
-        CMutableTransaction txNew;
-        txNew.vin.resize(1);
-        txNew.vout.resize(1);
-        txNew.vin[0].scriptSig = CScript() << 486604799 << CScriptNum(4) << vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
-        txNew.vout[0].nValue = 0 * COIN;
-        txNew.vout[0].scriptPubKey = CScript() << ParseHex("04e668b57880e492fdd2f0cdfd45b52b078a32a5282b4784202ac53b1299837e271f780192a8b014d33b51a6f8bbfc4cfaa3385829452bec7b77bf2f8f97520526") << OP_CHECKSIG;
-        genesis.vtx.push_back(txNew);
-        genesis.hashPrevBlock = 0;
-        genesis.hashMerkleRoot = genesis.BuildMerkleTree();
-        genesis.nVersion = 1;
-        genesis.nTime = 1529467399;
-        genesis.nBits = 0x1e0ffff0;
-        genesis.nNonce = 0;
+       static CBlock CreateGenesisBlock(const char *pszTimestamp, const CScript &genesisOutputScript, uint32_t nTime, uint32_t nNonce,
+    uint32_t nBits, int32_t nVersion, const CAmount &genesisReward,
+    std::vector<unsigned char> extraNonce) {
+    CMutableTransaction txNew;
+    txNew.nVersion = 1;
+    txNew.vin.resize(1);
+    txNew.vout.resize(1);
+    //CScriptNum csn = CScriptNum(4);
+    //std::cout << "CScriptNum(4):" << csn.GetHex();
+    //CBigNum cbn = CBigNum(4);
+    //std::cout << "CBigNum(4):" << cbn.GetHex();
+    txNew.vin[0].scriptSig = CScript() << 504365040 << CBigNum(4).getvch() << std::vector < unsigned char >
+        ((const unsigned char *)pszTimestamp, (const unsigned char *)pszTimestamp + strlen(pszTimestamp)) << extraNonce;
+    txNew.vout[0].nValue = genesisReward;
+    txNew.vout[0].scriptPubKey = genesisOutputScript;
 
-        hashGenesisBlock = genesis.GetHash();
-	//printf("%s\n", hashGenesisBlock.ToString().c_str());
-	//printf("%s\n", genesis.hashMerkleRoot.ToString().c_str());
-        assert(hashGenesisBlock == uint256("0x"));
-        assert(genesis.hashMerkleRoot == uint256("0x"));
+    CBlock genesis;
+    genesis.nTime = nTime;
+    genesis.nBits = nBits;
+    genesis.nNonce = nNonce;
+    genesis.nVersion = nVersion;
+    genesis.vtx.push_back(txNew);
+    genesis.hashPrevBlock.SetNull();
+    genesis.hashMerkleRoot = BlockMerkleRoot(genesis);
+    return genesis;
+	}
+	/**
+	* Build the genesis block. Note that the output of its generation
+	* transaction cannot be spent since it did not originally exist in the
+	* database.
+	*/
+	static CBlock CreateGenesisBlock(uint32_t nTime, uint32_t nNonce, uint32_t nBits, 	int32_t nVersion, const CAmount &genesisReward,
+    std::vector<unsigned char> extraNonce) {
+    const char *pszTimestamp = "Bitcoin hash: 00000000000000000043e9b341aba1b492927f3a063342ab1792297cbe7d296b";
+    const CScript genesisOutputScript = CScript();
+    return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward,
+        extraNonce);
+	}
 
 
         vSeeds.push_back(CDNSSeedData("seed1.purpleturtle.info", "seed1.purpleturtle.info"));
