@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=PTC
+Comment=PTC P2P Cryptocurrency
+Exec=purpleturtle-qt %u
+Terminal=false
+Type=Application
+Icon=taurusnetwork128
+MimeType=x-scheme-handler/purpleturtle;
+Categories=Office;Finance;
+Name[en_US]=purpleturtle-qt.desktop

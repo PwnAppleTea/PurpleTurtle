@@ -1,0 +1,26 @@
+[Unit]
+Description=PTC's distributed currency daemon
+After=network.target
+
+[Service]
+User=purpleturtle
+Group=purpleturtle
+
+Type=forking
+PIDFile=/var/lib/taurusnetworkd/taurusnetworkd.pid
+
+ExecStart=/usr/bin/taurusnetworkd -daemon -pid=/var/lib/taurusnetworkd/taurusnetworkd.pid \
+          -conf=/etc/purpleturtle/purpleturtle.conf -datadir=/var/lib/taurusnetworkd
+
+ExecStop=-/usr/bin/purpleturtle-cli -conf=/etc/purpleturtle/purpleturtle.conf \
+         -datadir=/var/lib/taurusnetworkd stop
+
+Restart=always
+PrivateTmp=true
+TimeoutStopSec=60s
+TimeoutStartSec=2s
+StartLimitInterval=120s
+StartLimitBurst=5
+
+[Install]
+WantedBy=multi-user.target
